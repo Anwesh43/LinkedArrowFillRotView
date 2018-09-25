@@ -25,9 +25,9 @@ fun Canvas.drawAFRNode(i : Int, scale : Float, paint : Paint) {
     paint.strokeWidth = Math.min(w, h) / 80
     paint.strokeCap = Paint.Cap.ROUND
     paint.style = Paint.Style.FILL_AND_STROKE
-    paint.color = Color.parseColor("#7B1FA2")
+    paint.color = Color.parseColor("#66BB6A")
     save()
-    translate(w/2, gap * i * gap)
+    translate(w/2, gap + i * gap)
     for (j in 0..1) {
         val sf : Float = 1f - 2 * j
         val sc : Float = Math.min(0.5f, Math.max(0f, scale - j * 0.5f)) * 2

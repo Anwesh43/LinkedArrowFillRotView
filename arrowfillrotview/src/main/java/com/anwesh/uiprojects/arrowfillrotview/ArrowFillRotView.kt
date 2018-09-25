@@ -175,4 +175,26 @@ class ArrowFillRotView(ctx : Context) : View(ctx) {
             curr.startUpdating(cb)
         }
     }
+
+    data class Renderer(var view : View, var animated : Boolean = false) {
+
+        private val afr : LinkedAFR = LinkedAFR(0)
+        private val animator : Animator = Animator(view)
+
+        fun render(canvas : Canvas, paint : Paint) {
+            canvas.drawColor(Color.parseColor("#BDBDBD"))
+            afr.draw(canvas, paint)
+            animator.animate {
+                afr.update {i, scl ->
+                    animator.stop()
+                }
+            }
+        }
+
+        fun handleTap() {
+            afr.startUpdating {
+                animator.start()
+            }
+        }
+    }
 }

@@ -12,13 +12,14 @@ import android.graphics.Canvas
 import android.graphics.Path
 import android.graphics.Color
 import android.content.Context
+import android.util.Log
 
 val nodes : Int = 5
 
 fun Canvas.drawAFRNode(i : Int, scale : Float, paint : Paint) {
     val w : Float = width.toFloat()
     val h : Float = height.toFloat()
-    val gap : Float = w / (nodes + 1)
+    val gap : Float = h / (nodes + 1)
     val wSize : Float = gap / 3
     val hSize : Float = gap / 2
     paint.strokeWidth = Math.min(w, h) / 80
@@ -33,7 +34,7 @@ fun Canvas.drawAFRNode(i : Int, scale : Float, paint : Paint) {
         val sc1 : Float = Math.min(0.5f, sc) * 2
         val sc2 : Float = Math.min(0.5f, Math.max(0f, sc - 0.5f)) * 2
         save()
-        translate(0f, (w/2 - hSize) * sc2 * sf)
+        translate((w/2 - hSize - wSize) * sc2 * sf, gap/2)
         rotate(90f * sf * sc1)
         drawRect(-wSize/2, -hSize, wSize/2, 0f, paint)
         val path : Path = Path()
@@ -67,7 +68,7 @@ class ArrowFillRotView(ctx : Context) : View(ctx) {
 
     data class State(var scale : Float = 0f, var prevScale : Float = 0f, var dir : Float = 0f){
         fun update(cb : (Float) -> Unit) {
-            scale += 0.1f * dir
+            scale += 0.025f * dir
             if (Math.abs(scale - prevScale) > 1) {
                 scale = prevScale + dir
                 dir = 0f
@@ -128,6 +129,10 @@ class ArrowFillRotView(ctx : Context) : View(ctx) {
             }
         }
 
+        override fun toString(): String {
+            return "${i}, next : ${next?.i}, prev : ${prev?.i}"
+        }
+
         fun draw(canvas : Canvas, paint : Paint) {
             canvas.drawAFRNode(i, state.scale, paint)
             next?.draw(canvas, paint)
@@ -140,6 +145,7 @@ class ArrowFillRotView(ctx : Context) : View(ctx) {
         }
 
         fun startUpdating(cb : () -> Unit) {
+            Log.d("curr", this.toString())
             state.startUpdating(cb)
         }
 
@@ -157,7 +163,7 @@ class ArrowFillRotView(ctx : Context) : View(ctx) {
     }
 
     data class LinkedAFR(var i : Int) {
-        private var root : AFRNode = AFRNode(0)
+        private val root : AFRNode = AFRNode(0)
         private var curr : AFRNode = root
         private var dir : Int = 1
 
@@ -170,6 +176,7 @@ class ArrowFillRotView(ctx : Context) : View(ctx) {
                 curr = curr.getNext(dir) {
                     dir *= -1
                 }
+                Log.d("curr", curr.toString())
                 cb(i, scl)
             }
         }

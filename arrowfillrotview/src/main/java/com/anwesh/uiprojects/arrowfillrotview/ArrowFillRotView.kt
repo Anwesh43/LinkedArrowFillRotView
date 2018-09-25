@@ -127,6 +127,7 @@ class ArrowFillRotView(ctx : Context) : View(ctx) {
 
         fun draw(canvas : Canvas, paint : Paint) {
             canvas.drawAFRNode(i, state.scale, paint)
+            next?.draw(canvas, paint)
         }
 
         fun update(cb : (Int, Float) -> Unit) {
@@ -149,6 +150,29 @@ class ArrowFillRotView(ctx : Context) : View(ctx) {
             }
             cb()
             return this
+        }
+    }
+
+    data class LinkedAFR(var i : Int) {
+        private var root : AFRNode = AFRNode(0)
+        private var curr : AFRNode = root
+        private var dir : Int = 1
+
+        fun draw(canvas : Canvas, paint : Paint) {
+            root.draw(canvas, paint)
+        }
+
+        fun update(cb : (Int, Float) ->  Unit) {
+            curr.update {i, scl ->
+                curr = curr.getNext(dir) {
+                    dir *= -1
+                }
+                cb(i, scl)
+            }
+        }
+
+        fun startUpdating(cb : () -> Unit) {
+            curr.startUpdating(cb)
         }
     }
 }

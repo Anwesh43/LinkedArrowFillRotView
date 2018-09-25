@@ -4,6 +4,7 @@ package com.anwesh.uiprojects.arrowfillrotview
  * Created by anweshmishra on 25/09/18.
  */
 
+import android.app.Activity
 import android.view.View
 import android.view.MotionEvent
 import android.graphics.Paint
@@ -197,6 +198,14 @@ class ArrowFillRotView(ctx : Context) : View(ctx) {
             afr.startUpdating {
                 animator.start()
             }
+        }
+    }
+
+    companion object {
+        fun create(activity : Activity) : ArrowFillRotView {
+            val view : ArrowFillRotView = ArrowFillRotView(activity)
+            activity.setContentView(view)
+            return view
         }
     }
 }
